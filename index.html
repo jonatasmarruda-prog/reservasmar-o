@@ -3,125 +3,220 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Passeios 2026</title>
+<title>Reservas de Passeios</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
 body{margin:0;background:#0c0c0c;font-family:Poppins,sans-serif;color:#fff}
-.container{max-width:500px;margin:auto;padding:14px}
+.container{max-width:520px;margin:auto;padding:14px}
 .card{background:#151515;border-radius:22px;padding:16px;box-shadow:0 0 25px rgba(0,0,0,.7)}
-select,input{width:100%;padding:14px;border-radius:14px;border:none;background:#2a2a2a;color:#fff}
-label{margin-top:10px;display:block;font-weight:600}
+
 .banner img{width:100%;border-radius:18px;margin-bottom:10px}
-.titulo{text-align:center;font-size:22px;font-weight:700}
-.desc{font-size:14px;color:#ddd;line-height:1.5}
-.contador{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
-.contador button{width:44px;height:44px;border:none;border-radius:12px;background:#333;color:#fff;font-size:22px}
-.info{text-align:center;margin-top:10px;font-size:14px}
+
+.titulo{font-size:22px;font-weight:700;text-align:center}
+.desc{font-size:14px;color:#ddd;line-height:1.5;margin:8px 0}
+
+.escolha-passeio{text-align:center;margin:10px 0}
+.escolha-passeio p{font-size:20px;font-weight:800;color:#00ff9c;margin-bottom:6px}
+.escolha-passeio select{
+  width:100%;
+  padding:16px;
+  font-size:18px;
+  font-weight:700;
+  border-radius:18px;
+  border:none;
+  background:linear-gradient(135deg,#00c96b,#00ff9c);
+  color:#000;
+}
+
+label{margin-top:10px;display:block;font-weight:600}
+select,input{
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  border:none;
+  background:#2a2a2a;
+  color:#fff;
+}
+
+.info-combo{
+  font-size:14px;
+  color:#ccc;
+  text-align:center;
+  margin:8px 0;
+}
+
+.info{text-align:center;margin-top:8px;font-size:14px}
 .total{font-size:22px;font-weight:700;text-align:center;color:#00ff9c;margin-top:8px}
-.btn{width:100%;margin-top:14px;padding:18px;border-radius:50px;border:none;font-size:18px;font-weight:700;color:#fff}
+
+.ultimas{
+  display:none;
+  background:#ff9800;
+  color:#000;
+  font-weight:800;
+  text-align:center;
+  padding:10px;
+  border-radius:12px;
+  margin-top:8px;
+  animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+  0%{opacity:1}
+  50%{opacity:.5}
+  100%{opacity:1}
+}
+
+.btn{
+  width:100%;
+  margin-top:14px;
+  padding:18px;
+  border-radius:50px;
+  border:none;
+  font-size:18px;
+  font-weight:700;
+  color:#fff;
+}
+
 .pix{background:linear-gradient(135deg,#00ff9c,#00c96b)}
 .whats{background:linear-gradient(135deg,#25d366,#1ebd5c)}
-.alerta{background:#550000;padding:10px;border-radius:12px;text-align:center;margin-top:10px;display:none}
+
+.alerta{
+  display:none;
+  background:#550000;
+  padding:12px;
+  border-radius:12px;
+  text-align:center;
+  font-weight:700;
+  margin-top:10px;
+}
 </style>
 
 <script>
 const PIX = "trilheiros.roomt@gmail.com";
 const WHATS = "5566996926174";
 
-let passeioAtual = "chapada";
-let qtd = 1;
-
 const passeios = {
   chapada:{
     nome:"Chapada dos Guimarães",
-    vagas:30,
     banner:"https://i.postimg.cc/vZLwxjSc/Copia-de-Post-instagram-dia-dos-povos-indigenas-ousado-verde.png",
-    opcoes:{
-      camping:{pix:360,cartao:380},
-      compartilhado:{pix:420,cartao:440},
-      casal:{pix:560,cartao:590}
-    }
+    vagasKey:"vagas_chapada",
+    vagasTotal:30,
+    valorAdulto:{pix:360,cartao:380},
+    valorCrianca:{pix:360,cartao:380} // mesma regra
   },
   lagoa:{
     nome:"Lagoa Azul",
-    vagas:28,
     banner:"https://i.postimg.cc/7hYnXCqs/Instagram-Post-Agencia-de-Viagem-Moderno-Azul-e-Branco.png",
-    opcoes:{
-      adulto:{pix:336,cartao:340},
-      crianca:{pix:280,cartao:280},
-      carro:{pix:215,cartao:215}
-    }
+    vagasKey:"vagas_lagoa",
+    vagasTotal:28,
+    valorAdulto:{pix:336,cartao:340},
+    valorCrianca:{pix:280,cartao:280}
   },
   vale:{
     nome:"Vale do Chico",
-    vagas:28,
     banner:"https://i.postimg.cc/9fb4bL0K/Travel-Instagram-Post-in-Blue-Green-Refined-Scrapbook-Style.png",
-    opcoes:{
-      individual:{pix:365,cartao:379},
-      casal:{pix:700,cartao:729},
-      crianca:{pix:295,cartao:309}
-    }
+    vagasKey:"vagas_vale",
+    vagasTotal:28,
+    valorAdulto:{pix:365,cartao:379},
+    valorCrianca:{pix:295,cartao:309}
   }
 };
 
-function carregar(){
-  const p = passeios[passeio.value];
+let passeioAtual = "chapada";
+let vagasDisponiveis = 0;
+
+function initPasseio(){
+  const p = passeios[passeioAtual];
   banner.src = p.banner;
   titulo.innerText = p.nome;
-  vagas.innerText = p.vagas;
-  opcao.innerHTML = "";
-  for(let o in p.opcoes){
-    opcao.innerHTML += `<option value="${o}">${o.toUpperCase()}</option>`;
+
+  vagasDisponiveis = localStorage.getItem(p.vagasKey);
+  if(vagasDisponiveis === null){
+    vagasDisponiveis = p.vagasTotal;
+    localStorage.setItem(p.vagasKey, vagasDisponiveis);
   }
-  atualizar();
+  vagasDisponiveis = parseInt(vagasDisponiveis);
+
+  atualizarResumo();
 }
 
-function atualizar(){
-  const p = passeios[passeio.value];
-  const tipo = opcao.value;
-  const forma = pagamento.value;
-  const valor = p.opcoes[tipo][forma] * qtd;
-  total.innerText = "💰 Total: R$ " + valor;
-}
+function atualizarResumo(){
+  const adultos = parseInt(qtdAdulto.value);
+  const criancas = parseInt(qtdCrianca.value);
+  const totalVagas = adultos + criancas;
 
-function mais(){qtd++;quantidade.innerText=qtd;atualizar();}
-function menos(){if(qtd>1){qtd--;quantidade.innerText=qtd;atualizar();}}
+  infoVagas.innerHTML = `🎟️ Vagas restantes: <b>${vagasDisponiveis}</b>`;
 
-function pagar(){
-  const nome = nomeCliente.value.trim();
-  if(!nome) return alert("Informe seu nome");
-
-  const p = passeios[passeio.value];
-  if(qtd > p.vagas){
-    alerta.style.display="block";
+  if(totalVagas === 0){
+    total.innerText = "💰 Selecione as vagas";
     return;
   }
 
-  p.vagas -= qtd;
-  vagas.innerText = p.vagas;
-
-  if(p.vagas <= 0){
-    alerta.style.display="block";
-    alerta.innerText="❌ VAGAS PREENCHIDAS";
+  if(totalVagas > vagasDisponiveis){
+    alert("Quantidade maior que as vagas disponíveis.");
+    return;
   }
+
+  const p = passeios[passeioAtual];
+  const forma = pagamento.value;
+
+  const valorTotal =
+    adultos * p.valorAdulto[forma] +
+    criancas * p.valorCrianca[forma];
+
+  total.innerText = `🎟️ ${totalVagas} vagas | 💰 R$ ${valorTotal}`;
+
+  if((vagasDisponiveis - totalVagas) <= 5){
+    ultimas.style.display = "block";
+  }else{
+    ultimas.style.display = "none";
+  }
+}
+
+function confirmar(){
+  const nome = nomeCliente.value.trim();
+  if(!nome) return alert("Informe seu nome.");
+
+  const adultos = parseInt(qtdAdulto.value);
+  const criancas = parseInt(qtdCrianca.value);
+  const totalVagas = adultos + criancas;
+
+  if(totalVagas === 0) return alert("Selecione as vagas.");
+
+  if(totalVagas > vagasDisponiveis) return alert("Vagas insuficientes.");
+
+  vagasDisponiveis -= totalVagas;
+  localStorage.setItem(passeios[passeioAtual].vagasKey, vagasDisponiveis);
 
   if(pagamento.value === "pix"){
     navigator.clipboard.writeText(PIX);
-    alert("PIX copiado!");
+    alert("✅ PIX copiado! Envie o comprovante para garantir sua vaga.");
   }else{
-    alert("Para cartão, fale com o Jonatas para gerar o link.");
+    alert("💳 Pagamento no cartão.\nFale com o Jonatas para gerar o link.\nApós o pagamento, envie o comprovante.");
   }
 
-  const msg = `Olá! Reserva confirmada:
-Passeio: ${p.nome}
+  const msg = `
+Reserva de passeio:
+${passeios[passeioAtual].nome}
+
 Nome: ${nome}
-Opção: ${opcao.value}
-Vagas: ${qtd}
-Valor: ${total.innerText}`;
+Adultos: ${adultos}
+Crianças: ${criancas}
+Total de vagas: ${totalVagas}
+${total.innerText}
+
+Segue comprovante para garantir minha vaga.
+`;
 
   window.open(`https://wa.me/${WHATS}?text=${encodeURIComponent(msg)}`);
+  atualizarResumo();
+}
+
+function trocarPasseio(){
+  passeioAtual = passeio.value;
+  initPasseio();
 }
 </script>
 </head>
@@ -130,15 +225,17 @@ Valor: ${total.innerText}`;
 <div class="container">
 <div class="card">
 
-<label>Escolha o passeio</label>
-<select id="passeio" onchange="carregar()">
-  <option value="chapada">Chapada dos Guimarães</option>
-  <option value="lagoa">Lagoa Azul</option>
-  <option value="vale">Vale do Chico</option>
-</select>
-
 <div class="banner">
 <img id="banner">
+</div>
+
+<div class="escolha-passeio">
+<p>👇 ESCOLHA SEU PASSEIO 👇</p>
+<select id="passeio" onchange="trocarPasseio()">
+  <option value="chapada">🌄 Chapada dos Guimarães</option>
+  <option value="lagoa">💙 Lagoa Azul</option>
+  <option value="vale">🌿 Vale do Chico</option>
+</select>
 </div>
 
 <div class="titulo" id="titulo"></div>
@@ -146,34 +243,47 @@ Valor: ${total.innerText}`;
 <label>Nome completo</label>
 <input id="nomeCliente">
 
-<label>Opção</label>
-<select id="opcao" onchange="atualizar()"></select>
+<p class="info-combo">
+ℹ️ Você pode combinar adultos e crianças.
+Exemplo: 2 adultos + 1 criança = 3 vagas.
+</p>
 
-<label>Quantidade</label>
-<div class="contador">
-<button onclick="menos()">−</button>
-<span id="quantidade">1</span>
-<button onclick="mais()">+</button>
-</div>
-
-<div class="info">🎟️ Vagas restantes: <b id="vagas"></b></div>
-
-<label>Pagamento</label>
-<select id="pagamento" onchange="atualizar()">
-  <option value="pix">PIX</option>
-  <option value="cartao">Cartão</option>
+<label>Adultos</label>
+<select id="qtdAdulto" onchange="atualizarResumo()">
+  <option value="0">0</option>
+  <option value="1">1</option>
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
 </select>
 
+<label>Crianças (até 10 anos)</label>
+<select id="qtdCrianca" onchange="atualizarResumo()">
+  <option value="0">0</option>
+  <option value="1">1</option>
+  <option value="2">2</option>
+</select>
+
+<div id="infoVagas" class="info"></div>
+<div id="ultimas" class="ultimas">⚠️ ÚLTIMAS VAGAS DISPONÍVEIS!</div>
 <div id="total" class="total"></div>
 
-<button class="btn pix" onclick="pagar()">CONFIRMAR</button>
+<label>Forma de pagamento</label>
+<select id="pagamento" onchange="atualizarResumo()">
+  <option value="pix">PIX</option>
+  <option value="cartao">Cartão de crédito</option>
+</select>
+
+<button class="btn pix" onclick="confirmar()">CONFIRMAR E ENVIAR COMPROVANTE</button>
 
 <div id="alerta" class="alerta">❌ VAGAS PREENCHIDAS</div>
 
 </div>
 </div>
 
-<script>carregar();</script>
+<script>
+initPasseio();
+</script>
 </body>
 </html>
 
