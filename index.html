@@ -12,22 +12,23 @@ body{margin:0;background:#0c0c0c;font-family:Poppins,sans-serif;color:#fff}
 .container{max-width:520px;margin:auto;padding:14px}
 .card{background:#151515;border-radius:22px;padding:16px;box-shadow:0 0 25px rgba(0,0,0,.7)}
 .banner img{width:100%;border-radius:18px}
-.escolha{text-align:center;margin:14px 0}
-.escolha p{font-size:22px;font-weight:800;color:#00ff9c}
 select,input{width:100%;padding:14px;border-radius:14px;border:none;background:#2a2a2a;color:#fff}
 label{margin-top:10px;display:block;font-weight:600}
 .total{font-size:22px;font-weight:700;text-align:center;color:#00ff9c;margin-top:10px}
-.info{text-align:center;margin-top:6px;font-size:14px}
-.ultimas{display:none;background:#ff1744;padding:10px;border-radius:12px;text-align:center;font-weight:700;margin-top:8px;animation:pulse .8s infinite}
-@keyframes pulse{0%{opacity:1}50%{opacity:.5}100%{opacity:1}}
+.info{text-align:center;font-size:14px;margin-top:6px}
+.ultimas{display:none;background:#ff1744;padding:10px;border-radius:12px;text-align:center;font-weight:700;margin-top:8px}
 .alerta{display:none;background:#550000;padding:12px;border-radius:12px;text-align:center;font-weight:700;margin-top:10px}
-.resumo{background:#1f1f1f;border-radius:16px;padding:12px;font-size:14px;margin-top:10px}
 .btn{width:100%;margin-top:14px;padding:18px;border-radius:50px;border:none;font-size:18px;font-weight:700;background:linear-gradient(135deg,#00ff9c,#00c96b)}
 </style>
 
 <script>
 const PIX="trilheiros.roomt@gmail.com";
 const WHATS="5566996926174";
+
+const CARTAO_CHAPADA = {
+  casal: "https://mpago.li/1szssQp",
+  compartilhado: "https://mpago.li/1VoTeFx"
+};
 
 const passeios={
   chapada:{
@@ -36,108 +37,85 @@ const passeios={
     vagasKey:"vagas_chapada",
     vagasTotal:30,
     valores:{
-      camping:{pix:360,cartao:380},
-      compartilhado:{pix:420,cartao:440},
-      casal:{pix:560,cartao:590},
-      crianca:{pix:360,cartao:360}
-    }
-  },
-  lagoa:{
-    nome:"Lagoa Azul",
-    banner:"https://i.postimg.cc/7hYnXCqs/Instagram-Post-Agencia-de-Viagem-Moderno-Azul-e-Branco.png",
-    vagasKey:"vagas_lagoa",
-    vagasTotal:28,
-    valores:{
-      adulto:{pix:336,cartao:340},
-      crianca:{pix:280,cartao:280},
-      carro:{pix:215,cartao:215}
-    }
-  },
-  vale:{
-    nome:"Vale do Chico",
-    banner:"https://i.postimg.cc/9fb4bL0K/Travel-Instagram-Post-in-Blue-Green-Refined-Scrapbook-Style.png",
-    vagasKey:"vagas_vale",
-    vagasTotal:28,
-    valores:{
-      adulto:{pix:365,cartao:379},
-      crianca:{pix:295,cartao:309}
+      camping:{pix:360},
+      compartilhado:{pix:420},
+      casal:{pix:560},
+      crianca:{pix:360}
     }
   }
 };
 
-let passeioAtual="chapada", vagasDisponiveis=0;
+let vagasDisponiveis=0;
 
 function carregar(){
-  passeioAtual=passeio.value;
-  const p=passeios[passeioAtual];
-  banner.src=p.banner;
-  titulo.innerText=p.nome;
+  banner.src=passeios.chapada.banner;
+  titulo.innerText=passeios.chapada.nome;
 
-  vagasDisponiveis=localStorage.getItem(p.vagasKey);
+  vagasDisponiveis=localStorage.getItem("vagas_chapada");
   if(vagasDisponiveis===null){
-    vagasDisponiveis=p.vagasTotal;
-    localStorage.setItem(p.vagasKey,vagasDisponiveis);
+    vagasDisponiveis=30;
+    localStorage.setItem("vagas_chapada",30);
   }
   vagasDisponiveis=parseInt(vagasDisponiveis);
-
-  boxHospedagem.style.display=passeioAtual==="chapada"?"block":"none";
-  boxCarro.style.display=passeioAtual==="lagoa"?"block":"none";
-  boxCasal.style.display="none";
 
   atualizar();
 }
 
 function atualizar(){
-  let vagas=0,valor=0;
-  const f=pagamento.value;
-
-  if(passeioAtual==="chapada"){
-    const tipo=tipoHospedagem.value;
-    const a=+qtdAdulto.value;
-    const c=+qtdCrianca.value;
-    boxCasal.style.display=tipo==="casal"?"block":"none";
-    vagas=a+c+(tipo==="casal"?1:0);
-    valor=a*passeios.chapada.valores[tipo][f]+c*passeios.chapada.valores.crianca[f];
-  }
-
-  if(passeioAtual==="lagoa"){
-    const a=+qtdAdulto.value,c=+qtdCrianca.value,car=+qtdCarro.value;
-    vagas=a+c+car;
-    valor=a*passeios.lagoa.valores.adulto[f]+
-          c*passeios.lagoa.valores.crianca[f]+
-          car*passeios.lagoa.valores.carro[f];
-  }
-
-  if(passeioAtual==="vale"){
-    const a=+qtdAdulto.value,c=+qtdCrianca.value;
-    vagas=a+c;
-    valor=a*passeios.vale.valores.adulto[f]+
-          c*passeios.vale.valores.crianca[f];
-  }
+  const tipo=tipoHospedagem.value;
+  const a=+qtdAdulto.value;
+  const c=+qtdCrianca.value;
+  const vagas=a+c+(tipo==="casal"?1:0);
 
   info.innerHTML=`🎟️ Vagas restantes: <b>${vagasDisponiveis}</b>`;
-  ultimas.style.display=(vagasDisponiveis<=5 && vagasDisponiveis>0)?"block":"none";
+  ultimas.style.display=vagasDisponiveis<=5 && vagasDisponiveis>0?"block":"none";
   alerta.style.display=vagasDisponiveis<=0?"block":"none";
 
-  total.innerText=vagas>0?`🎟️ ${vagas} vagas | 💰 R$ ${valor}`:"";
-  resumo.innerHTML=`<b>${passeios[passeioAtual].nome}</b><br>Vagas: ${vagas}<br>Valor: R$ ${valor}`;
+  let total = a*passeios.chapada.valores[tipo].pix +
+              c*passeios.chapada.valores.crianca.pix;
+
+  totalBox.innerText=vagas?`🎟️ ${vagas} vagas | 💰 R$ ${total}`:"";
 }
 
 function confirmar(){
-  if(vagasDisponiveis<=0)return alert("Vagas esgotadas.");
-  if(!nome.value.trim())return alert("Informe seu nome.");
+  if(!nome.value.trim()) return alert("Informe seu nome.");
 
-  if(passeioAtual==="chapada" && tipoHospedagem.value==="casal"){
-    if(!nome1.value||!nome2.value)return alert("Informe os nomes do casal.");
+  const tipo=tipoHospedagem.value;
+  const a=+qtdAdulto.value;
+  const c=+qtdCrianca.value;
+  const vagas=a+c+(tipo==="casal"?1:0);
+
+  if(vagas>vagasDisponiveis) return alert("Vagas insuficientes.");
+
+  if(pagamento.value==="pix"){
+    navigator.clipboard.writeText(PIX);
+    alert("PIX copiado! Envie o comprovante para garantir sua vaga.");
+  }else{
+    if(vagas>1){
+      alert("Para mais de uma pessoa no cartão, fale com o Jonatas para gerar um novo link.");
+      return;
+    }
+
+    if(tipo==="casal" || tipo==="compartilhado"){
+      window.open(CARTAO_CHAPADA[tipo],"_blank");
+      alert("Após o pagamento, envie o comprovante no WhatsApp.");
+    }else{
+      alert("Pagamento no cartão disponível apenas para quarto compartilhado ou casal.");
+      return;
+    }
   }
 
-  navigator.clipboard.writeText(PIX);
-  alert("PIX copiado! Envie o comprovante.");
+  vagasDisponiveis-=vagas;
+  localStorage.setItem("vagas_chapada",vagasDisponiveis);
 
-  const msg=`Reserva:
-${passeios[passeioAtual].nome}
+  const msg=`Reserva Chapada dos Guimarães
 Nome: ${nome.value}
-${resumo.innerText}`;
+Hospedagem: ${tipo}
+Adultos: ${a}
+Crianças: ${c}
+${totalBox.innerText}
+
+Segue comprovante para garantir minha vaga.`;
 
   window.open(`https://wa.me/${WHATS}?text=${encodeURIComponent(msg)}`);
 }
@@ -145,78 +123,49 @@ ${resumo.innerText}`;
 </head>
 
 <body>
-<div class="container"><div class="card">
+<div class="container">
+<div class="card">
 
 <div class="banner"><img id="banner"></div>
-
-<div class="escolha">
-<p>ESCOLHA O PASSEIO</p>
-<select id="passeio" onchange="carregar()">
-<option value="chapada">🌄 Chapada dos Guimarães</option>
-<option value="lagoa">💙 Lagoa Azul</option>
-<option value="vale">🌿 Vale do Chico</option>
-</select>
-</div>
-
 <h2 id="titulo" style="text-align:center"></h2>
 
 <label>Nome completo</label>
 <input id="nome">
 
-<div id="boxHospedagem">
 <label>Hospedagem</label>
 <select id="tipoHospedagem" onchange="atualizar()">
 <option value="camping">🏕️ Camping</option>
-<option value="compartilhado">🛏️ Compartilhado</option>
-<option value="casal">🛌 Casal</option>
+<option value="compartilhado">🛏️ Quarto compartilhado</option>
+<option value="casal">🛌 Quarto casal</option>
 </select>
-</div>
-
-<div id="boxCasal">
-<label>Nome do 1º integrante</label><input id="nome1">
-<label>Nome do 2º integrante</label><input id="nome2">
-</div>
 
 <label>Adultos</label>
 <select id="qtdAdulto" onchange="atualizar()">
-<option>0</option><option>1</option><option>2</option><option>3</option>
-<option>4</option><option>5</option><option>6</option><option>7</option>
-<option>8</option><option>9</option><option>10</option>
+<option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
 </select>
 
 <label>Crianças até 10 anos</label>
 <select id="qtdCrianca" onchange="atualizar()">
 <option>0</option><option>1</option><option>2</option><option>3</option>
-<option>4</option><option>5</option><option>6</option><option>7</option>
-<option>8</option><option>9</option><option>10</option>
 </select>
-
-<div id="boxCarro">
-<label>Veículo próprio</label>
-<select id="qtdCarro" onchange="atualizar()">
-<option>0</option><option>1</option><option>2</option><option>3</option>
-<option>4</option><option>5</option>
-</select>
-</div>
 
 <div id="info" class="info"></div>
 <div id="ultimas" class="ultimas">⚠️ ÚLTIMAS VAGAS</div>
 <div id="alerta" class="alerta">❌ VAGAS ESGOTADAS</div>
 
-<div id="total" class="total"></div>
-<div id="resumo" class="resumo"></div>
+<div id="totalBox" class="total"></div>
 
 <label>Forma de pagamento</label>
-<select id="pagamento" onchange="atualizar()">
+<select id="pagamento">
 <option value="pix">PIX</option>
-<option value="cartao">Cartão</option>
+<option value="cartao">Cartão de crédito</option>
 </select>
 
-<button class="btn" onclick="confirmar()">CONFIRMAR E ENVIAR COMPROVANTE</button>
+<button class="btn" onclick="confirmar()">CONFIRMAR E PAGAR</button>
 
-</div></div>
+</div>
+</div>
 
 <script>carregar();</script>
 </body>
 </html>
-
