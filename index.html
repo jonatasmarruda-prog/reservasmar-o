@@ -1,242 +1,195 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reservas – Trilhas de Março</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reservas – Trilheiros de Rondonópolis</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body{font-family:Poppins,sans-serif}
+    .progress{transition:width .3s ease}
+    .modal-bg{background:rgba(0,0,0,.75)}
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<div class="max-w-xl mx-auto p-4">
+  <h1 class="text-2xl font-bold text-center mb-2">Reservas Oficiais – Trilheiros de Rondonópolis 🌿</h1>
+  <p class="text-center text-emerald-400 mb-4">Escolha seu próximo destino e garanta sua vaga</p>
 
-<style>
-body{margin:0;background:#0f0f0f;font-family:Poppins,sans-serif;color:#fff}
-.container{max-width:520px;margin:auto;padding:14px}
-.card{background:#181818;border-radius:22px;padding:16px;box-shadow:0 0 25px rgba(0,0,0,.7)}
-.banner img{width:100%;border-radius:18px}
+  <!-- PASSEIO: VALE DO CHICO -->
+  <section class="bg-gray-800 rounded-2xl p-4 border border-gray-700 mb-6">
+    <img class="w-full rounded-xl mb-3" src="https://i.postimg.cc/vZLwxjSc/Copia-de-Post-instagram-dia-dos-povos-indigenas-ousado-verde.png" alt="Vale do Chico"/>
+    <h2 class="text-xl font-bold mb-1">Vale do Chico – Jaciara/MT</h2>
+    <p class="text-sm text-gray-300 mb-3">Trilhas, cachoeiras e conexão com a natureza 🌿</p>
 
-h2{text-align:center;margin:10px 0}
-p{font-size:14px;line-height:1.6;color:#ddd}
+    <ul class="text-sm text-gray-300 list-disc list-inside mb-3">
+      <li>Transporte ida e volta</li>
+      <li>Acompanhamento de guia</li>
+      <li>Acesso aos atrativos</li>
+    </ul>
 
-label{margin-top:12px;display:block;font-weight:600}
-select,input{
-  width:100%;
-  padding:14px;
-  border-radius:14px;
-  border:none;
-  background:#2a2a2a;
-  color:#fff;
-}
+    <!-- Vagas -->
+    <div class="mb-3">
+      <div class="flex justify-between text-xs text-gray-400 mb-1">
+        <span id="vale-usadas">0</span>
+        <span>/ 30 vagas</span>
+      </div>
+      <div class="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+        <div id="vale-barra" class="h-full bg-emerald-500 progress" style="width:0%"></div>
+      </div>
+      <p id="vale-alerta" class="text-xs text-yellow-400 mt-1 hidden">🔥 Últimas vagas!</p>
+      <p id="vale-esgotado" class="text-xs text-red-400 mt-1 hidden">❌ Vagas esgotadas</p>
+    </div>
 
-.info{text-align:center;margin-top:6px;font-size:14px}
-.total{font-size:22px;font-weight:700;text-align:center;color:#00ff9c;margin-top:10px}
+    <button id="btnVale" onclick="abrirModal('vale')" class="w-full py-4 rounded-full bg-emerald-500 text-gray-900 font-bold">Reservar agora</button>
+  </section>
 
-.ultimas{
-  display:none;
-  background:#ff1744;
-  padding:10px;
-  border-radius:12px;
-  text-align:center;
-  font-weight:700;
-  margin-top:8px;
-  animation:pulse .8s infinite;
-}
-@keyframes pulse{0%{opacity:1}50%{opacity:.5}100%{opacity:1}}
+  <!-- PASSEIO: LAGOA AZUL -->
+  <section class="bg-gray-800 rounded-2xl p-4 border border-gray-700">
+    <img class="w-full rounded-xl mb-3" src="https://i.postimg.cc/DwqqjFb8/Instagram-Post-Agencia-de-Viagem-Moderno-Azul-e-Branco.png" alt="Lagoa Azul"/>
+    <h2 class="text-xl font-bold mb-1">Lagoa Azul – Primavera do Leste/MT</h2>
+    <p class="text-sm text-gray-300 mb-3">Águas cristalinas para um dia perfeito 💙</p>
 
-.esgotado{
-  display:none;
-  background:#550000;
-  padding:12px;
-  border-radius:12px;
-  text-align:center;
-  font-weight:700;
-  margin-top:10px;
-}
+    <ul class="text-sm text-gray-300 list-disc list-inside mb-3">
+      <li>Transporte ida e volta</li>
+      <li>Snorkel e colete salva-vidas</li>
+      <li>Acompanhamento de guia</li>
+    </ul>
 
-.btn{
-  width:100%;
-  margin-top:16px;
-  padding:18px;
-  border-radius:50px;
-  border:none;
-  font-size:18px;
-  font-weight:700;
-  background:linear-gradient(135deg,#00ff9c,#00c96b);
-  cursor:pointer;
-}
-</style>
+    <!-- Vagas -->
+    <div class="mb-3">
+      <div class="flex justify-between text-xs text-gray-400 mb-1">
+        <span id="lagoa-usadas">0</span>
+        <span>/ 30 vagas</span>
+      </div>
+      <div class="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+        <div id="lagoa-barra" class="h-full bg-blue-500 progress" style="width:0%"></div>
+      </div>
+      <p id="lagoa-alerta" class="text-xs text-yellow-400 mt-1 hidden">🔥 Últimas vagas!</p>
+      <p id="lagoa-esgotado" class="text-xs text-red-400 mt-1 hidden">❌ Vagas esgotadas</p>
+    </div>
+
+    <button id="btnLagoa" onclick="abrirModal('lagoa')" class="w-full py-4 rounded-full bg-blue-500 text-gray-900 font-bold">Reservar agora</button>
+  </section>
+
+  <!-- Botão flutuante WhatsApp -->
+  <a href="https://wa.me/5566996926174" target="_blank" class="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-green-500 flex items-center justify-center shadow-xl text-2xl">📲</a>
+</div>
+
+<!-- MODAL -->
+<div id="modal" class="fixed inset-0 hidden modal-bg items-center justify-center p-4">
+  <div class="bg-gray-800 rounded-2xl w-full max-w-md p-5 border border-gray-700">
+    <h3 id="modal-titulo" class="text-xl font-bold mb-3">Pagamento</h3>
+
+    <div class="space-y-3">
+      <button onclick="copiarPIX()" class="w-full py-3 rounded-xl bg-gray-700">💸 Copiar PIX</button>
+
+      <div id="links-cartao" class="space-y-2"></div>
+
+      <a id="btnComprovante" target="_blank" class="block w-full py-3 rounded-xl bg-green-600 text-center font-bold">Enviar comprovante no WhatsApp</a>
+    </div>
+
+    <button onclick="fecharModal()" class="mt-4 w-full py-2 rounded-xl bg-gray-700">Fechar</button>
+  </div>
+</div>
 
 <script>
-const PIX="trilheiros.roomt@gmail.com";
-const WHATS="5566996926174";
+const PIX = "trilheiros.roomt@gmail.com";
+const WHATS = "5566996926174";
+const TOTAL_VAGAS = 30;
 
-const CARTAO_CHAPADA={
-  compartilhado_transporte:"https://mpago.li/1VoTeFx",
-  casal_transporte:"https://mpago.li/1szssQp",
-  casal_carro:"https://mpago.li/2iuq5uT"
-};
-
-const VAGAS={
-  chapada:{total:30,key:"vagas_chapada"},
-  lagoa:{total:28,key:"vagas_lagoa"}
-};
-
-const VALORES={
-  chapada:{
-    compartilhado_transporte:{pix:420,cartao:440},
-    casal_transporte:{pix:740,cartao:760},
-    compartilhado_carro:{pix:330,cartao:350},
-    casal_carro:{pix:510,cartao:530}
+const links = {
+  vale: {
+    individual: "https://mpago.li/2HA5tTm",
+    casal: "https://mpago.li/1YDjw3N",
+    crianca: "https://wa.me/5566996926174?text=Olá%20Jonatas!%20Quero%20o%20link%20do%20cartão%20para%20criança%20no%20Vale%20do%20Chico%20👶🌿",
+    comprovante: "https://wa.me/5566996926174?text=Olá!%20Já%20fiz%20o%20pagamento%20do%20Vale%20do%20Chico.%20Segue%20o%20comprovante"
   },
-  lagoa:{
-    adulto:{pix:336,cartao:340},
-    crianca:{pix:280,cartao:280},
-    carro:{pix:215,cartao:215}
+  lagoa: {
+    van: "https://mpago.li/2yrVFJQ",
+    carro: "https://mpago.li/2w3NHMD",
+    comprovante: "https://wa.me/5566996926174?text=Olá!%20Já%20fiz%20o%20pagamento%20da%20Lagoa%20Azul%20(15%20de%20março).%20Segue%20o%20comprovante"
   }
 };
 
-let passeioAtual="chapada";
-let vagasDisponiveis=0;
+let usadasVale = 0;
+let usadasLagoa = 0;
 
-function iniciar(){
-  carregarPasseio();
+function atualizarVagas() {
+  atualizarUI('vale', usadasVale);
+  atualizarUI('lagoa', usadasLagoa);
 }
 
-function carregarPasseio(){
-  passeioAtual=document.getElementById("passeio").value;
+function atualizarUI(tipo, usadas) {
+  const barra = document.getElementById(tipo + '-barra');
+  const usadasEl = document.getElementById(tipo + '-usadas');
+  const alerta = document.getElementById(tipo + '-alerta');
+  const esgotado = document.getElementById(tipo + '-esgotado');
+  const btn = document.getElementById(tipo === 'vale' ? 'btnVale' : 'btnLagoa');
 
-  if(passeioAtual==="chapada"){
-    banner.src="https://i.postimg.cc/vZLwxjSc/Copia-de-Post-instagram-dia-dos-povos-indigenas-ousado-verde.png";
-    descricao.innerHTML=`
-🗓️ <b>7 e 8 de março</b><br>
-🕑 Saída: 07/03 às 14h<br>
-🕒 Retorno: 08/03 às 15h<br><br>
-🏡 <b>Hospedagem:</b> Pousada Mirante<br><br>
-📍 <b>Roteiro:</b><br>
-• Mirante Geodésico<br>
-• Mirante Morro dos Ventos<br>
-• Praça Central da Chapada<br>
-• Cachoeira Véu da Noiva<br><br>
-✅ Incluso: transporte (exceto carro próprio), café da manhã e acesso aos atrativos<br>
-❌ Não incluso: almoço e jantar
-`;
-    boxChapada.style.display="block";
-    boxLagoa.style.display="none";
+  const perc = Math.min((usadas / TOTAL_VAGAS) * 100, 100);
+  barra.style.width = perc + '%';
+  usadasEl.textContent = usadas;
+
+  if (TOTAL_VAGAS - usadas <= 0) {
+    esgotado.classList.remove('hidden');
+    alerta.classList.add('hidden');
+    btn.disabled = true;
+    btn.classList.add('opacity-50');
+  } else if (TOTAL_VAGAS - usadas <= 5) {
+    alerta.classList.remove('hidden');
+    esgotado.classList.add('hidden');
+  } else {
+    alerta.classList.add('hidden');
+    esgotado.classList.add('hidden');
   }
-
-  if(passeioAtual==="lagoa"){
-    banner.src="https://i.postimg.cc/7hYnXCqs/Instagram-Post-Agencia-de-Viagem-Moderno-Azul-e-Branco.png";
-    descricao.innerHTML=`
-🗓️ <b>15 de março</b><br>
-🚐 Saída de Rondonópolis<br><br>
-💙 Um dia inteiro em águas cristalinas.<br><br>
-❌ Não incluso: café da manhã e almoço
-`;
-    boxChapada.style.display="none";
-    boxLagoa.style.display="block";
-  }
-
-  vagasDisponiveis=parseInt(localStorage.getItem(VAGAS[passeioAtual].key) || VAGAS[passeioAtual].total);
-  localStorage.setItem(VAGAS[passeioAtual].key,vagasDisponiveis);
-  atualizar();
 }
 
-function atualizar(){
-  let qtd=0,totalValor=0;
-  const forma=document.getElementById("pagamento").value;
+function abrirModal(tipo) {
+  const modal = document.getElementById('modal');
+  const titulo = document.getElementById('modal-titulo');
+  const linksBox = document.getElementById('links-cartao');
+  const btnComp = document.getElementById('btnComprovante');
 
-  infoVagas.innerHTML=`🎟️ Vagas disponíveis: <b>${vagasDisponiveis}</b>`;
-  ultimas.style.display=(vagasDisponiveis<=5 && vagasDisponiveis>0)?"block":"none";
-  esgotado.style.display=vagasDisponiveis<=0?"block":"none";
+  linksBox.innerHTML = "";
 
-  if(passeioAtual==="chapada"){
-    qtd=parseInt(qtdVagas.value || 0);
-    if(qtd>0) totalValor=qtd*VALORES.chapada[opcaoChapada.value][forma];
+  if (tipo === 'vale') {
+    titulo.textContent = "Vale do Chico – Pagamento";
+    linksBox.innerHTML = `
+      <a href="${links.vale.individual}" target="_blank" class="block w-full py-3 rounded-xl bg-blue-600 text-center font-bold">💳 Cartão Individual</a>
+      <a href="${links.vale.casal}" target="_blank" class="block w-full py-3 rounded-xl bg-purple-600 text-center font-bold">💳 Cartão Casal</a>
+      <a href="${links.vale.crianca}" target="_blank" class="block w-full py-3 rounded-xl bg-gray-700 text-center font-bold">👶 Criança (solicitar link)</a>
+    `;
+    btnComp.href = links.vale.comprovante;
+  } else {
+    titulo.textContent = "Lagoa Azul – Pagamento";
+    linksBox.innerHTML = `
+      <a href="${links.lagoa.van}" target="_blank" class="block w-full py-3 rounded-xl bg-blue-600 text-center font-bold">💳 Cartão Adulto / Van</a>
+      <a href="${links.lagoa.carro}" target="_blank" class="block w-full py-3 rounded-xl bg-gray-700 text-center font-bold">🚗 Cartão Veículo Próprio</a>
+    `;
+    btnComp.href = links.lagoa.comprovante;
   }
 
-  if(qtd===0||vagasDisponiveis<=0){total.innerText="";return;}
-  if(qtd>vagasDisponiveis){total.innerText="⚠️ Quantidade maior que vagas disponíveis";return;}
-
-  total.innerText=`🎟️ ${qtd} vaga(s) | 💰 R$ ${totalValor}`;
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
 }
 
-function confirmar(){
-  if(!nomeCliente.value.trim()) return alert("Informe seu nome.");
-
-  let qtd=parseInt(qtdVagas.value||0);
-  if(qtd>vagasDisponiveis) return alert("Quantidade maior que vagas disponíveis.");
-
-  if(pagamento.value==="pix"){
-    navigator.clipboard.writeText(PIX);
-    alert("PIX copiado! Envie o comprovante para garantir sua vaga.");
-  }else{
-    if(qtd>1) return alert("Cartão disponível apenas para 1 vaga. Fale com o Jonatas.");
-    window.open(CARTAO_CHAPADA[opcaoChapada.value],"_blank");
-  }
-
-  vagasDisponiveis-=qtd;
-  localStorage.setItem(VAGAS[passeioAtual].key,vagasDisponiveis);
-
-  const msg=`Reserva – ${passeio.options[passeio.selectedIndex].text}
-Nome: ${nomeCliente.value}
-${total.innerText}
-
-Envio o comprovante para garantir minha vaga.`;
-
-  window.open(`https://wa.me/${WHATS}?text=${encodeURIComponent(msg)}`,"_blank");
-  atualizar();
+function fecharModal() {
+  const modal = document.getElementById('modal');
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
 }
+
+function copiarPIX() {
+  navigator.clipboard.writeText(PIX);
+  alert("PIX copiado! Cole no seu app do banco e finalize o pagamento.");
+}
+
+atualizarVagas();
 </script>
-</head>
 
-<body onload="iniciar()">
-<div class="container">
-<div class="card">
-
-<div class="banner"><img id="banner"></div>
-
-<h2>Reservas</h2>
-
-<label>Escolha o passeio</label>
-<select id="passeio" onchange="carregarPasseio()">
-  <option value="chapada">🌄 Chapada dos Guimarães</option>
-  <option value="lagoa">💙 Lagoa Azul</option>
-</select>
-
-<p id="descricao"></p>
-
-<label>Nome completo</label>
-<input id="nomeCliente" placeholder="Digite seu nome">
-
-<div id="boxChapada">
-<label>Opção</label>
-<select id="opcaoChapada" onchange="atualizar()">
-  <option value="compartilhado_transporte">🛏️ Quarto compartilhado – transporte incluso</option>
-  <option value="casal_transporte">🛌 Quarto casal – transporte incluso</option>
-  <option value="compartilhado_carro">🚗 Carro próprio – quarto compartilhado</option>
-  <option value="casal_carro">🚗 Carro próprio – quarto casal</option>
-</select>
-
-<label>Quantidade de vagas</label>
-<select id="qtdVagas" onchange="atualizar()">
-  <option>0</option><option>1</option><option>2</option><option>3</option>
-  <option>4</option><option>5</option>
-</select>
-</div>
-
-<div id="infoVagas" class="info"></div>
-<div id="ultimas" class="ultimas">⚠️ ÚLTIMAS VAGAS</div>
-<div id="esgotado" class="esgotado">❌ VAGAS ESGOTADAS</div>
-
-<div id="total" class="total"></div>
-
-<label>Forma de pagamento</label>
-<select id="pagamento" onchange="atualizar()">
-  <option value="pix">PIX</option>
-  <option value="cartao">Cartão</option>
-</select>
-
-<button class="btn" onclick="confirmar()">CONFIRMAR E ENVIAR COMPROVANTE</button>
-
-</div>
-</div>
 </body>
 </html>
+
