@@ -68,20 +68,17 @@ select,input{
 const PIX="trilheiros.roomt@gmail.com";
 const WHATS="5566996926174";
 
-/* LINKS DE CARTÃO – APENAS 1 VAGA */
 const CARTAO_CHAPADA={
   compartilhado_transporte:"https://mpago.li/1VoTeFx",
   casal_transporte:"https://mpago.li/1szssQp",
   casal_carro:"https://mpago.li/2iuq5uT"
 };
 
-/* VAGAS */
 const VAGAS={
   chapada:{total:30,key:"vagas_chapada"},
   lagoa:{total:28,key:"vagas_lagoa"}
 };
 
-/* VALORES */
 const VALORES={
   chapada:{
     compartilhado_transporte:{pix:420,cartao:440},
@@ -104,7 +101,7 @@ function iniciar(){
 }
 
 function carregarPasseio(){
-  passeioAtual=passeio.value;
+  passeioAtual=document.getElementById("passeio").value;
 
   if(passeioAtual==="chapada"){
     banner.src="https://i.postimg.cc/vZLwxjSc/Copia-de-Post-instagram-dia-dos-povos-indigenas-ousado-verde.png";
@@ -131,42 +128,28 @@ function carregarPasseio(){
 🗓️ <b>15 de março</b><br>
 🚐 Saída de Rondonópolis<br><br>
 💙 Um dia inteiro em águas cristalinas.<br><br>
-✅ Incluso: transporte, snorkel, colete, seguro de vida e guia<br>
 ❌ Não incluso: café da manhã e almoço
 `;
     boxChapada.style.display="none";
     boxLagoa.style.display="block";
   }
 
-  vagasDisponiveis=localStorage.getItem(VAGAS[passeioAtual].key);
-  if(vagasDisponiveis===null){
-    vagasDisponiveis=VAGAS[passeioAtual].total;
-    localStorage.setItem(VAGAS[passeioAtual].key,vagasDisponiveis);
-  }
-  vagasDisponiveis=parseInt(vagasDisponiveis);
-
+  vagasDisponiveis=parseInt(localStorage.getItem(VAGAS[passeioAtual].key) || VAGAS[passeioAtual].total);
+  localStorage.setItem(VAGAS[passeioAtual].key,vagasDisponiveis);
   atualizar();
 }
 
 function atualizar(){
   let qtd=0,totalValor=0;
-  const forma=pagamento.value;
+  const forma=document.getElementById("pagamento").value;
 
   infoVagas.innerHTML=`🎟️ Vagas disponíveis: <b>${vagasDisponiveis}</b>`;
   ultimas.style.display=(vagasDisponiveis<=5 && vagasDisponiveis>0)?"block":"none";
   esgotado.style.display=vagasDisponiveis<=0?"block":"none";
 
   if(passeioAtual==="chapada"){
-    qtd=parseInt(qtdVagas.value);
+    qtd=parseInt(qtdVagas.value || 0);
     if(qtd>0) totalValor=qtd*VALORES.chapada[opcaoChapada.value][forma];
-  }
-
-  if(passeioAtual==="lagoa"){
-    qtd=parseInt(qtdAdulto.value)+parseInt(qtdCrianca.value)+parseInt(qtdCarro.value);
-    totalValor=
-      (parseInt(qtdAdulto.value)*VALORES.lagoa.adulto[forma])+
-      (parseInt(qtdCrianca.value)*VALORES.lagoa.crianca[forma])+
-      (parseInt(qtdCarro.value)*VALORES.lagoa.carro[forma]);
   }
 
   if(qtd===0||vagasDisponiveis<=0){total.innerText="";return;}
@@ -178,26 +161,15 @@ function atualizar(){
 function confirmar(){
   if(!nomeCliente.value.trim()) return alert("Informe seu nome.");
 
-  let qtd=0;
-  if(passeioAtual==="chapada") qtd=parseInt(qtdVagas.value);
-  if(passeioAtual==="lagoa") qtd=parseInt(qtdAdulto.value)+parseInt(qtdCrianca.value)+parseInt(qtdCarro.value);
-  if(qtd>vagasDisponiveis) return;
+  let qtd=parseInt(qtdVagas.value||0);
+  if(qtd>vagasDisponiveis) return alert("Quantidade maior que vagas disponíveis.");
 
   if(pagamento.value==="pix"){
     navigator.clipboard.writeText(PIX);
     alert("PIX copiado! Envie o comprovante para garantir sua vaga.");
   }else{
-    if(qtd>1){
-      alert("Para mais de uma vaga no cartão, fale com o Jonatas para gerar um novo link.");
-      return;
-    }
-    if(passeioAtual==="chapada" && CARTAO_CHAPADA[opcaoChapada.value]){
-      window.open(CARTAO_CHAPADA[opcaoChapada.value],"_blank");
-      alert("Após o pagamento, envie o comprovante.");
-    }else{
-      alert("Pagamento no cartão disponível apenas via contato com o Jonatas.");
-      return;
-    }
+    if(qtd>1) return alert("Cartão disponível apenas para 1 vaga. Fale com o Jonatas.");
+    window.open(CARTAO_CHAPADA[opcaoChapada.value],"_blank");
   }
 
   vagasDisponiveis-=qtd;
@@ -209,7 +181,7 @@ ${total.innerText}
 
 Envio o comprovante para garantir minha vaga.`;
 
-  window.open(`https://wa.me/${WHATS}?text=${encodeURIComponent(msg)}`);
+  window.open(`https://wa.me/${WHATS}?text=${encodeURIComponent(msg)}`,"_blank");
   atualizar();
 }
 </script>
@@ -232,7 +204,7 @@ Envio o comprovante para garantir minha vaga.`;
 <p id="descricao"></p>
 
 <label>Nome completo</label>
-<input id="nomeCliente">
+<input id="nomeCliente" placeholder="Digite seu nome">
 
 <div id="boxChapada">
 <label>Opção</label>
@@ -246,25 +218,7 @@ Envio o comprovante para garantir minha vaga.`;
 <label>Quantidade de vagas</label>
 <select id="qtdVagas" onchange="atualizar()">
   <option>0</option><option>1</option><option>2</option><option>3</option>
-  <option>4</option><option>5</option><option>6</option><option>7</option>
-  <option>8</option><option>9</option><option>10</option>
-</select>
-</div>
-
-<div id="boxLagoa" style="display:none">
-<label>Adultos</label>
-<select id="qtdAdulto" onchange="atualizar()">
-  <option>0</option><option>1</option><option>2</option><option>3</option>
-</select>
-
-<label>Crianças</label>
-<select id="qtdCrianca" onchange="atualizar()">
-  <option>0</option><option>1</option><option>2</option>
-</select>
-
-<label>Veículo próprio</label>
-<select id="qtdCarro" onchange="atualizar()">
-  <option>0</option><option>1</option><option>2</option>
+  <option>4</option><option>5</option>
 </select>
 </div>
 
@@ -286,5 +240,3 @@ Envio o comprovante para garantir minha vaga.`;
 </div>
 </body>
 </html>
-
-
